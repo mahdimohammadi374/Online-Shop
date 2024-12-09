@@ -8,8 +8,8 @@ public class Product : BaseAuditableEntity, ICommandEntity
     public decimal Price { get; set; }
     public string PictureUrl { get; set; }
     public string Description { get; set; }
-    public bool IsActive { get; set; }
-    public bool IsDeleted { get; set; }
+    public bool IsActive { get; set; } = true;
+    public bool IsDeleted { get; set; } = false;
     public string Summary { get; set; }
 
     #region Relations
