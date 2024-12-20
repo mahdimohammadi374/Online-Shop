@@ -1,6 +1,9 @@
-﻿using Infrastructure.Persistance.Context;
+﻿using Domain.Exceptions;
+using Infrastructure.Persistance.Context;
 using Infrastructure.Persistance.SeedData;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Web.Middlewares;
 
 namespace Web;
 
@@ -9,15 +12,36 @@ public static class ConfigureService
     public static IServiceCollection AddWebServiceCollection(this WebApplicationBuilder builder)
     {
         builder.Services.AddControllers();
+        ApiBehaviorOptions(builder);
+
+
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+
+        builder.Services.AddHttpContextAccessor();
+        builder.Services.AddDistributedMemoryCache();
         return builder.Services;
+    }
+
+    private static void ApiBehaviorOptions(WebApplicationBuilder builder)
+    {
+        builder.Services.Configure<ApiBehaviorOptions>(opt =>
+        {
+            opt.InvalidModelStateResponseFactory = action =>
+            {
+                var errors = action.ModelState.
+                Where(x => x.Value.Errors.Count() > 0)
+                .SelectMany(x => x.Value.Errors)
+                .Select(x => x.ErrorMessage).ToList();
+                return new BadRequestObjectResult(new ApiExcpetionReturn(errors, 400));
+            };
+        });
     }
 
     public async static Task<IApplicationBuilder> AddWebAppBuilder(this WebApplication app)
     {
-
+        app.UseMiddleware<MiddlewareExceptionHandler>();
         //Get Services
         var loggerFactory = app.Services.GetRequiredService<ILoggerFactory>();
         var scope = app.Services.CreateScope();

@@ -19,6 +19,7 @@ public class DataBaseContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        modelBuilder.Entity<Product>().HasQueryFilter(x => !x.IsDeleted);
     }
 
 }

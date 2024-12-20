@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Web.Common;
 
@@ -6,4 +7,6 @@ namespace Web.Common;
 [ApiController]
 public class BaseController : ControllerBase
 {
+    private ISender sender = null!;
+    protected ISender Mediator => sender ??= HttpContext.RequestServices.GetRequiredService<ISender>();
 }
