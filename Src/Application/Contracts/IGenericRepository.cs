@@ -15,4 +15,5 @@ public interface IGenericRepository<T> where T : BaseEntity
     Task<bool> AnyAsync(Expression<Func<T,bool>> expression);
     Task<T> GetEntityWithSpec(ISpecification<T> spec, CancellationToken cancellationToken);
     Task<IReadOnlyList<T>> ListAsyncSpec(ISpecification<T> spec, CancellationToken cancellationToken);
+    Task<int> CountSpecAsync(ISpecification<T> spec, CancellationToken cancellationToken);
 }

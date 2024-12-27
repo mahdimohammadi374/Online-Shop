@@ -28,6 +28,11 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
         return await dbSet.AnyAsync(expression);
     }
 
+    public async Task<int> CountSpecAsync(ISpecification<T> spec, CancellationToken cancellationToken)
+    {
+        return await ApplySpecification(spec).CountAsync(cancellationToken);
+    }
+
     public async void DeleteAsync(long id)
     {
        T entity =await dbSet.FindAsync(id);
@@ -85,6 +90,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
 
     private IQueryable<T> ApplySpecification(ISpecification<T> spec)
     {
+        var q = SpecificationEvaluator<T>.GetQuery(dbSet.AsQueryable(), spec);
         return SpecificationEvaluator<T>.GetQuery(dbSet.AsQueryable(), spec);
     }
 }

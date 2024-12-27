@@ -7,7 +7,7 @@ public class ProductTypeGetSpec : BaseSpecification<ProductType>
 {
     public ProductTypeGetSpec()
     {
-        
+        IsPaginEnabled = false;   
     }
     public ProductTypeGetSpec(long id):base(x=>x.Id == id)
     {

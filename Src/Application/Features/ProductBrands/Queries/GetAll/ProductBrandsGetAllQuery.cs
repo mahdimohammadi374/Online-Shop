@@ -1,8 +1,9 @@
-﻿using Domain.Entities;
+﻿using Application.Models.ProductBrands;
+using Domain.Entities;
 using MediatR;
 
 namespace Application.Features.ProductBrands.Queries.GetAll;
 
-public class ProductBrandsGetAllQuery : IRequest<IEnumerable<ProductBrand>>
+public class ProductBrandsGetAllQuery : IRequest<IEnumerable<ProductBrandGetQueryModel>>
 {
 }

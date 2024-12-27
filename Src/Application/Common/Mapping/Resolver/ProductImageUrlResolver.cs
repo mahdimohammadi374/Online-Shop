@@ -17,7 +17,7 @@ public class ProductImageUrlResolver : IValueResolver<Product, ProductsGetQueryM
     public string Resolve(Product source, ProductsGetQueryModel destination, string destMember, ResolutionContext context)
     {
         if(!string.IsNullOrEmpty(source.PictureUrl))
-            return _configuration["BackendUrl"] + _configuration["ImageLocation:ProductImageLocation"] + source.PictureUrl;
+            return _configuration["BackendUrl"] + _configuration["ImageLocation:ProductImageLocation"]+"/" + source.PictureUrl;
         return null;
     }
 }

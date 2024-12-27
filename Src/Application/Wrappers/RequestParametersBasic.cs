@@ -1,6 +1,6 @@
 ﻿namespace Application.Wrappers;
 
-public abstract class RequestParametersBasic
+public abstract class RequestParametersBasic : PaginationParametersModel
 {
     private string _search { get; set; }
     public TypeSort TypeSort { get; set; }

@@ -9,7 +9,7 @@ namespace Web;
 
 public static class ConfigureService
 {
-    public static IServiceCollection AddWebServiceCollection(this WebApplicationBuilder builder)
+    public static IServiceCollection AddWebServiceCollection(this WebApplicationBuilder builder, IConfiguration configuration)
     {
         builder.Services.AddControllers();
         ApiBehaviorOptions(builder);
@@ -18,6 +18,13 @@ public static class ConfigureService
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+        builder.Services.AddCors(opt =>
+        {
+            opt.AddPolicy("CorsPolicy", action =>
+            {
+                action.AllowAnyHeader().AllowAnyMethod().WithOrigins(builder.Configuration["ClientUrl:HttpUrl"], builder.Configuration["ClientUrl:HttpsUrl"]);
+            });
+        });
 
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddDistributedMemoryCache();
@@ -42,6 +49,7 @@ public static class ConfigureService
     public async static Task<IApplicationBuilder> AddWebAppBuilder(this WebApplication app)
     {
         app.UseMiddleware<MiddlewareExceptionHandler>();
+        
         //Get Services
         var loggerFactory = app.Services.GetRequiredService<ILoggerFactory>();
         var scope = app.Services.CreateScope();
@@ -68,9 +76,10 @@ public static class ConfigureService
             app.UseSwagger();
             app.UseSwaggerUI();
         }
-
+        app.UseStaticFiles();
+        app.UseRouting();
+        app.UseCors("CorsPolicy");
         app.UseAuthorization();
-
         app.MapControllers();
         app.Run();
 

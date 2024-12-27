@@ -9,4 +9,7 @@ public interface ISpecification<T> where T : BaseEntity
     List<Expression<Func<T,object>>> Includes { get; }
     Expression<Func<T,object>> OrderBy { get; }
     Expression<Func<T,object>> OrderByDesc { get; }
+    public int Take { get; set; }
+    public int Skip { get; set; }
+    public bool IsPaginEnabled { get; }
 }

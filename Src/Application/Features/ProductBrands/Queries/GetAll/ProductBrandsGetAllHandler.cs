@@ -1,19 +1,24 @@
 ﻿using Application.Contracts;
+using Application.Models.ProductBrands;
+using AutoMapper;
 using Domain.Entities;
 using MediatR;
 
 namespace Application.Features.ProductBrands.Queries.GetAll;
 
-public class ProductBrandsGetAllHandler : IRequestHandler<ProductBrandsGetAllQuery, IEnumerable<ProductBrand>>
+public class ProductBrandsGetAllHandler : IRequestHandler<ProductBrandsGetAllQuery, IEnumerable<ProductBrandGetQueryModel>>
 {
     private readonly IUnitOfWork _unitOfWork;
-    public ProductBrandsGetAllHandler(IUnitOfWork unitOfWork)
+    private readonly IMapper _mapper;
+    public ProductBrandsGetAllHandler(IUnitOfWork unitOfWork, IMapper mapper)
     {
         _unitOfWork = unitOfWork;
+        _mapper = mapper;
     }
 
-    public async Task<IEnumerable<ProductBrand>> Handle(ProductBrandsGetAllQuery request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<ProductBrandGetQueryModel>> Handle(ProductBrandsGetAllQuery request, CancellationToken cancellationToken)
     {
-        return await _unitOfWork.Repository<ProductBrand>().GetAllAsync(cancellationToken);
+        var result = await _unitOfWork.Repository<ProductBrand>().GetAllAsync(cancellationToken);
+        return _mapper.Map<IEnumerable<ProductBrandGetQueryModel>>(result);
     }
 }

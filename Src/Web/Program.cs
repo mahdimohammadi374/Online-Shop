@@ -12,12 +12,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApplicationConfigureService();
 builder.Services.AddInfrastructureConfigureService(builder.Configuration);
-builder.AddWebServiceCollection();
+builder.AddWebServiceCollection(builder.Configuration);
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 var app = builder.Build();
 //app.UseMiddleware<MiddlewareExceptionHandler>();
-app.UseStaticFiles();
-
 await app.AddWebAppBuilder().ConfigureAwait(false);
 
 

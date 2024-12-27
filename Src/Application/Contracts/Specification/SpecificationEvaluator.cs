@@ -20,6 +20,9 @@ public class SpecificationEvaluator<T> where T : BaseEntity
         if (specification.OrderByDesc != null)
             query = query.OrderByDescending(specification.OrderByDesc);
 
+        if(specification.IsPaginEnabled) 
+            query = query.Skip(specification.Skip).Take(specification.Take);
+
         return query;
         
     }

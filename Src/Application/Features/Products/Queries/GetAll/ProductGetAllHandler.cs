@@ -2,6 +2,7 @@
 using Application.Contracts;
 using Application.Features.Products.Queries.Get;
 using Application.Models.Products;
+using Application.Wrappers;
 using AutoMapper;
 using Domain.Entities;
 using MediatR;
@@ -9,7 +10,7 @@ using System.Linq.Expressions;
 
 namespace Application.Features.Products.Queries.GetAll;
 
-public class ProductGetAllHandler : IRequestHandler<ProductGetAllQuery, IEnumerable<ProductsGetQueryModel>>
+public class ProductGetAllHandler : IRequestHandler<ProductGetAllQuery, PaginationResponse<ProductsGetQueryModel>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -21,10 +22,19 @@ public class ProductGetAllHandler : IRequestHandler<ProductGetAllQuery, IEnumera
         _mapper = mapper;
     }
 
-    public async Task<IEnumerable<ProductsGetQueryModel>> Handle(ProductGetAllQuery request, CancellationToken cancellationToken)
+    public async Task<PaginationResponse<ProductsGetQueryModel>> Handle(ProductGetAllQuery request, CancellationToken cancellationToken)
     {
-        var spec = new ProductGetSpec();
+        var spec = new ProductGetSpec(request);
+        var count = await _unitOfWork.Repository<Product>().CountSpecAsync(new ProductsCountSpec(request),cancellationToken);
         var result = await _unitOfWork.Repository<Product>().ListAsyncSpec(spec, cancellationToken);
-        return _mapper.Map<List<ProductsGetQueryModel>>(result);
+
+        var response = new PaginationResponse<ProductsGetQueryModel>()
+        {
+            Count = count,
+            PageIndex = request.PageIndex,
+            PageSize = request.PageSize,
+            Result = _mapper.Map<List<ProductsGetQueryModel>>(result)
+        };
+        return response;
     }  
 }
